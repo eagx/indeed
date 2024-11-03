@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch HTML of a Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        input {
+            padding: 10px;
+            width: 300px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 15px;
+        }
+        pre {
+            max-width: 600px;
+            max-height: 300px;
+            overflow: auto;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fetch HTML of a Page</h1>
+    <input type="text" id="urlInput" placeholder="Enter website URL" />
+    <button id="fetchButton">Fetch HTML</button>
+    <pre id="output"></pre>
+
+    <script>
+        document.getElementById('fetchButton').onclick = async function() {
+            const url = document.getElementById('urlInput').value;
+            if (!url) {
+                alert("Please enter a URL.");
+                return;
+            }
+
+            try {
+                const response = await fetch(url, { mode: 'cors' });
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+
+                const text = await response.text();
+                const dO = document.doctype;
+                let dtd = '';
+                if (dO) {
+                    dtd = `<!DOCTYPE ${dO.name}${dO.publicId ? ' PUBLIC "' + dO.publicId + '"' : ''}${dO.systemId ? ' "' + dO.systemId + '"': ''}`.trim() + '>\n';
+                }
+                const htmlOfPage = dtd + text;
+
+                document.getElementById('output').textContent = htmlOfPage;
+            } catch (error) {
+                console.error('Error fetching HTML:', error);
+                alert('Error fetching HTML: ' + error.message);
+            }
+        };
+    </script>
+</body>
+</html>
